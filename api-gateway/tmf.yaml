@@ -1,0 +1,141 @@
+---
+# Source: tmfc006-servicecatalogmanagement/templates/PersistentVolumeClaim-0.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    oda.tmforum.org/componentName: 'r1-tmfc006-servicecatalogmanagement'
+  name: 'r1-mongodb-pv-claim'
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+---
+# Source: tmfc006-servicecatalogmanagement/templates/Service-1.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    oda.tmforum.org/componentName: 'r1-tmfc006-servicecatalogmanagement'
+  name: 'r1-service-quality-management-management-api'
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: "nlb-ip"
+    service.beta.kubernetes.io/aws-load-balancer-internal: "true"
+spec:
+  type: ClusterIP
+  ports:
+  - name: tcp-r1-service
+    port: 8080
+    targetPort: 'r1-service'
+  selector:
+    impl: 'r1-service-quality-management-management-api'
+
+---
+# Source: tmfc006-servicecatalogmanagement/templates/Service-3.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    oda.tmforum.org/componentName: 'r1-tmfc006-servicecatalogmanagement'
+  name: 'r1-mongodb'
+spec:
+  ports:
+  - name: tcp-r1-mongodb
+    port: 27017
+    targetPort: 'r1-mongodb'
+  selector:
+    impl: 'r1-mongodb'
+
+---
+# Source: tmfc006-servicecatalogmanagement/templates/Deployment-1.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    oda.tmforum.org/componentName: 'r1-tmfc006-servicecatalogmanagement'
+  name: 'r1-service-quality-management-management-api'
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      impl: 'r1-service-quality-management-management-api'
+  template:
+    metadata:
+      labels:
+        app: 'r1-tmfc006-servicecatalogmanagement'
+        impl: 'r1-service-quality-management-management-api'
+        version: v4.0.0
+    spec:
+      containers:
+      - env:
+        - name: MONGO_SERVICE_HOST
+          value: 'r1-mongodb'
+        - name: RELEASE_NAME
+          value: 'r1'
+        - name: COMPONENT_NAME
+          value: 'r1-tmfc006-servicecatalogmanagement'
+        image: 'tmforumorg/tmfc006-tmf657-v4.0.0:latest'
+        imagePullPolicy: Always
+        name: 'r1-service-quality-management-management-api'
+        ports:
+        - containerPort: 8080
+          name: 'r1-service'
+        resources:
+          limits:
+            cpu: '0.5'
+            memory: 900Mi
+          requests:
+            cpu: '0.1'
+            memory: 600Mi
+        startupProbe:
+          failureThreshold: 30
+          httpGet:
+            path: /r1-tmfc006-servicecatalogmanagement/tmf-api/serviceQualityManagement/v4/
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 5
+---
+# Source: tmfc006-servicecatalogmanagement/templates/Deployment-3.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    oda.tmforum.org/componentName: 'r1-tmfc006-servicecatalogmanagement'
+  name: 'r1-mongodb'
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      impl: 'r1-mongodb'
+  template:
+    metadata:
+      labels:
+        app: 'r1-tmfc006-servicecatalogmanagement'
+        impl: 'r1-mongodb'
+        version: mongo-5.0.1
+    spec:
+      containers:
+      - env:
+        - name: MONGO_SERVICE_HOST
+          value: 'r1-mongodb'
+        - name: RELEASE_NAME
+          value: 'r1'
+        - name: COMPONENT_NAME
+          value: 'r1-tmfc006-servicecatalogmanagement'
+        image: mongo:5.0.1
+        imagePullPolicy: Always
+        name: 'r1-mongodb'
+        ports:
+        - containerPort: 27017
+          name: 'r1-mongodb'
+        volumeMounts:
+        - mountPath: /data/db
+          name: 'r1-mongodb-pv-storage'
+      volumes:
+      - name: 'r1-mongodb-pv-storage'
+        persistentVolumeClaim:
+          claimName: 'r1-mongodb-pv-claim'
+
+

@@ -1,0 +1,56 @@
+---
+# create http api gw
+apiVersion: apigatewayv2.services.k8s.aws/v1alpha1
+kind: API
+metadata:
+  name: "ack-api"
+  namespace: components
+spec:
+  name: "ack-api"
+  protocolType: HTTP
+---
+# stage
+apiVersion: apigatewayv2.services.k8s.aws/v1alpha1
+kind: Stage
+metadata:
+  name: "default-stage"
+  namespace: components
+spec:
+  apiRef:
+    from:
+      name: "ack-api"
+  stageName: "$default"
+  autoDeploy: true
+  description: "auto deployed stage for ack-api"
+---
+# route-key used in path
+apiVersion: apigatewayv2.services.k8s.aws/v1alpha1
+kind: Route
+metadata:
+  name: "ack-route-vpclink"
+  namespace: components
+spec:
+  apiRef:
+    from:
+      name: "ack-api"
+  routeKey: "ANY /{proxy+}"
+  targetRef:
+    from:
+      name: "vpc-integration"
+---
+# hook with route. this one uses a public http site as backend
+apiVersion: apigatewayv2.services.k8s.aws/v1alpha1
+kind: Integration
+metadata:
+  name: "vpc-integration"
+  namespace: components
+spec:
+  apiRef:
+    from:
+      name: "ack-api"
+  integrationType: HTTP_PROXY
+  integrationURI: "arn:aws:elasticloadbalancing:us-west-2:905418332144:listener/net/k8s-istioing-istioing-d2b15b16f7/68f9f27012616a6b/bcfb64291ad4b4cc"
+  integrationMethod: ANY
+  payloadFormatVersion: "1.0"
+  connectionID: "04myi9" # api_gatewayv2_vpc_link_id in terraform output
+  connectionType: "VPC_LINK"

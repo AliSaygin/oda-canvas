@@ -1,0 +1,1 @@
+aws elbv2 describe-load-balancers --region "us-west-2"  --query "LoadBalancerDescriptions[?DNSName=='k8s-istioing-istioing-f944b518a8-62f30a17ace67ac2.elb.us-west-2.amazonaws.com'].[LoadBalancerName,LoadBalancerArn]" --output text

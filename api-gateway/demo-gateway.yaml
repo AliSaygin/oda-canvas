@@ -1,0 +1,56 @@
+---
+# create http api gw
+apiVersion: apigatewayv2.services.k8s.aws/v1alpha1
+kind: API
+metadata:
+  name: "servicequalitymanagement"
+  namespace: gateway-demo
+spec:
+  name: "servicequalitymanagement"
+  protocolType: HTTP
+---
+# stage
+apiVersion: apigatewayv2.services.k8s.aws/v1alpha1
+kind: Stage
+metadata:
+  name: "default-stage"
+  namespace: gateway-demo
+spec:
+  apiRef:
+    from:
+      name: "servicequalitymanagement"
+  stageName: "$default"
+  autoDeploy: true
+  description: "auto deployed stage for servicequalitymanagement"
+---
+# route-key used in path
+apiVersion: apigatewayv2.services.k8s.aws/v1alpha1
+kind: Route
+metadata:
+  name: "ack-route-vpclink"
+  namespace: gateway-demo
+spec:
+  apiRef:
+    from:
+      name: "servicequalitymanagement"
+  routeKey: "ANY /{proxy+}"
+  targetRef:
+    from:
+      name: "vpc-integration"
+---
+# hook with route. this one uses a public http site as backend
+apiVersion: apigatewayv2.services.k8s.aws/v1alpha1
+kind: Integration
+metadata:
+  name: "vpc-integration"
+  namespace: gateway-demo
+spec:
+  apiRef:
+    from:
+      name: "servicequalitymanagement"
+  integrationType: HTTP_PROXY
+  integrationURI: "arn:aws:elasticloadbalancing:us-west-2:905418332144:listener/net/k8s-gatewayd-r1servic-8ebff06dae/7297cc2cf88e006b/ff006b2db2cd050d"
+  integrationMethod: ANY
+  payloadFormatVersion: "1.0"
+  connectionID: "04myi9" # api_gatewayv2_vpc_link_id in terraform output
+  connectionType: "VPC_LINK"
