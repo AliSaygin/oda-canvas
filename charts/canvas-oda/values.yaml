@@ -105,12 +105,15 @@ keycloak:
       - name: keycloak.local
         path: /
         tls: false
+  
 controller:
+  apigateway:
+    url: "https://pggy1f26v7.execute-api.us-west-2.amazonaws.com"
   deployment:
     controllerName: oda-controller-ingress
-    #compconImage: tmforumodacanvas/component-istio-controller:0.4.0 
-    compconImage: mtr.devops.telekom.de/magenta_canvas/public:component-istio-controller-0.4.1
-    compconImagePullPolicy: IfNotPresent
+    compconImage: tmforumorg/component-istio-controller:gateway-latest 
+    #compconImage: mtr.devops.telekom.de/magenta_canvas/public:component-istio-controller-0.4.1
+    compconImagePullPolicy: Always
     istioGateway: true
     secconImage: tmforumodacanvas/security-listener:0.7.0
     monitoredNamespaces: 'components'           # comma separated list of namespaces
@@ -119,7 +122,7 @@ controller:
       name: nginx
     keycloak: *portKeycloak
     dataDog:
-      enabled: true
+      enabled: false
   #We reuse the admin user created on keycloak installation
   credentials:
     user: admin

@@ -16,3 +16,4 @@ data:
   {{- if .Values.deployment.dataDog.enabled }}
   OPENMETRICS_IMPLEMENTATION: "DataDogAnnotation"
   {{ end }}
+  API_GATEWAY_URL: {{ .Values.apigateway.url }}

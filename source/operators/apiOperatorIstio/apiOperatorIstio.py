@@ -40,6 +40,13 @@ APIS_PLURAL = "apis"
 OPENMETRICS_IMPLEMENTATION = os.environ.get('OPENMETRICS_IMPLEMENTATION', 'ServiceMonitor') # could be ServiceMonitor or PrometheusAnnotation or DataDogAnnotation
 print('Prometheus pattern set to ',OPENMETRICS_IMPLEMENTATION)
 
+
+API_GATEWAY_URL = os.environ.get("API_GATEWAY_URL", None)
+print(f"API gateway url: ", API_GATEWAY_URL)
+
+if API_GATEWAY_URL:
+    HTTP_SCHEME = ""
+
 APIOPERATORISTIO_PUBLICHOSTNAME = os.environ.get('APIOPERATORISTIO_PUBLICHOSTNAME') # hostname to be used for calling public APIs. 
 publichostname_loadBalancer = None                                                  # Overwrites the LB ip/hostname retrieved from istioingress service.
 if APIOPERATORISTIO_PUBLICHOSTNAME:
@@ -459,6 +466,12 @@ def getIstioIngressStatus(inHandler, name, componentName):
         ports = serviceSpec.ports
         if publichostname_loadBalancer:
             loadBalancer = publichostname_loadBalancer
+        if API_GATEWAY_URL:
+            loadBalancer = {
+                "ingress": [{
+                    "hostname": API_GATEWAY_URL
+                }]
+            }
         response = {'loadBalancer': loadBalancer, 'ports': ports}
         logWrapper(logging.INFO, 'getIstioIngressStatus', inHandler, 'api/' + name, componentName, "Istio Ingress Gateway", "Received ingress status.")
     except Exception as e:
