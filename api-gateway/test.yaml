@@ -3,10 +3,10 @@
 apiVersion: apigatewayv2.services.k8s.aws/v1alpha1
 kind: API
 metadata:
-  name: "ack-api"
+  name: "canvas-api-gateay"
   namespace: components
 spec:
-  name: "ack-api"
+  name: "canvas-api-gateay"
   protocolType: HTTP
 ---
 # stage
@@ -18,10 +18,10 @@ metadata:
 spec:
   apiRef:
     from:
-      name: "ack-api"
+      name: "canvas-api-gateay"
   stageName: "$default"
   autoDeploy: true
-  description: "auto deployed stage for ack-api"
+  description: "auto deployed stage for canvas-api-gateay"
 ---
 # route-key used in path
 apiVersion: apigatewayv2.services.k8s.aws/v1alpha1
@@ -32,7 +32,7 @@ metadata:
 spec:
   apiRef:
     from:
-      name: "ack-api"
+      name: "canvas-api-gateay"
   routeKey: "ANY /{proxy+}"
   targetRef:
     from:
@@ -47,10 +47,10 @@ metadata:
 spec:
   apiRef:
     from:
-      name: "ack-api"
+      name: "canvas-api-gateay"
   integrationType: HTTP_PROXY
-  integrationURI: "arn:aws:elasticloadbalancing:us-west-2:905418332144:listener/net/k8s-istioing-istioing-d2b15b16f7/68f9f27012616a6b/bcfb64291ad4b4cc"
+  integrationURI: "arn:aws:elasticloadbalancing:us-west-2:905418332144:listener/net/k8s-istioing-istioing-0fd6c42858/de98af0d95abb30b/51d004e3bd7f9b10"
   integrationMethod: ANY
   payloadFormatVersion: "1.0"
-  connectionID: "04myi9" # api_gatewayv2_vpc_link_id in terraform output
+  connectionID: "b6oxrx" # api_gatewayv2_vpc_link_id in terraform output
   connectionType: "VPC_LINK"

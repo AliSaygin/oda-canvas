@@ -108,7 +108,7 @@ keycloak:
   
 controller:
   apigateway:
-    url: "https://pggy1f26v7.execute-api.us-west-2.amazonaws.com"
+    url: "https://kit2kqz798.execute-api.us-west-2.amazonaws.com"
   deployment:
     controllerName: oda-controller-ingress
     compconImage: tmforumorg/component-istio-controller:gateway-latest 
