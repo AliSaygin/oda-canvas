@@ -1,8 +1,7 @@
 defaults:
   service:
-    type: ClusterIP
+    type: LoadBalancer
     annotations:
-      service.beta.kubernetes.io/aws-load-balancer-type: "nlb-ip"
       service.beta.kubernetes.io/aws-load-balancer-internal: "true"
   labels:
       app: istio-ingress
