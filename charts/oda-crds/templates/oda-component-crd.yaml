@@ -147,7 +147,7 @@ spec:
   - name: "v1alpha2"
     # Each version can be enabled/disabled by Served flag.
     served: false
-    # One and only one version must be marked as the storage version.
+    # One and only one version must be marked as the storage   version.
     storage: false
     schema:
       openAPIV3Schema:
