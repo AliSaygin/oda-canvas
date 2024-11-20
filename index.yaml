@@ -1,6 +1,27 @@
 apiVersion: v1
 entries:
+  api-operator-istio:
+  - apiVersion: v2
+    appVersion: v1beta4
+    created: "2024-11-20T13:48:34.58484922Z"
+    description: A helm chart to deploy the api operator for istio
+    digest: 2214c9a48289c9cded18b6d3b51703809fab1e8d83d9cec62ef9ac3657e8e991
+    name: api-operator-istio
+    type: application
+    urls:
+    - https://github.com/AliSaygin/oda-canvas/releases/download/api-operator-istio-1.0.2/api-operator-istio-1.0.2.tgz
+    version: 1.0.2
   canvas-namespaces:
+  - apiVersion: v2
+    appVersion: v1beta4
+    created: "2024-11-20T13:48:34.723663238Z"
+    description: A Helm chart for Kubernetes to create a namespace for oda-canvas
+    digest: cd7de83b777400a05c75c734b21399934eb7f148a4300ffeccac300540b19cdb
+    name: canvas-namespaces
+    type: application
+    urls:
+    - https://github.com/AliSaygin/oda-canvas/releases/download/canvas-namespaces-1.0.1/canvas-namespaces-1.0.1.tgz
+    version: 1.0.1
   - apiVersion: v2
     appVersion: v1beta3
     created: "2024-02-02T13:27:10.122676931Z"
@@ -22,6 +43,52 @@ entries:
     - https://github.com/tmforum-oda/oda-canvas/releases/download/canvas-namespaces-0.1.0/canvas-namespaces-0.1.0.tgz
     version: 0.1.0
   canvas-oda:
+  - apiVersion: v2
+    appVersion: v1beta4
+    created: "2024-11-20T13:48:34.860940589Z"
+    dependencies:
+    - name: cert-manager-init
+      repository: file://../cert-manager-init
+      version: 1.0.2
+    - condition: canvas-namespaces.enabled
+      name: canvas-namespaces
+      repository: file://../canvas-namespaces
+      version: 1.0.1
+    - condition: oda-crds.enabled
+      name: oda-crds
+      repository: file://../oda-crds
+      version: 1.1.4
+    - condition: keycloak.enabled
+      name: keycloak
+      repository: https://charts.bitnami.com/bitnami
+      version: 13.0.2
+    - name: component-operator
+      repository: file://../component-operator
+      version: 1.2.1
+    - name: api-operator-istio
+      repository: file://../api-operator-istio
+      version: 1.0.2
+    - condition: dependentapi-simple-operator.enabled
+      name: dependentapi-simple-operator
+      repository: file://../dependentapi-simple-operator
+      version: 0.2.4
+    - name: secretsmanagement-operator
+      repository: file://../secretsmanagement-operator
+      version: 0.1.3
+    - condition: canvas-vault.enabled
+      name: canvas-vault
+      repository: file://../canvas-vault
+      version: 0.2.1
+    - name: oda-webhook
+      repository: file://../oda-webhook
+      version: 1.1.4
+    description: A Helm of helm to orchestrate the ODA installation
+    digest: 93da9e4b001a2018faeb8f296b98c5577acc9fc281dd168623c4b72f05609f85
+    name: canvas-oda
+    type: application
+    urls:
+    - https://github.com/AliSaygin/oda-canvas/releases/download/canvas-oda-1.1.8-rc6/canvas-oda-1.1.8-rc6.tgz
+    version: 1.1.8-rc6
   - apiVersion: v2
     appVersion: v1beta3
     created: "2024-06-13T19:03:59.359180184Z"
@@ -154,7 +221,37 @@ entries:
     urls:
     - https://github.com/tmforum-oda/oda-canvas/releases/download/canvas-oda-0.1.0/canvas-oda-0.1.0.tgz
     version: 0.1.0
+  canvas-vault:
+  - apiVersion: v2
+    appVersion: 1.14.8
+    created: "2024-11-20T13:48:35.026488462Z"
+    dependencies:
+    - name: vault
+      repository: https://helm.releases.hashicorp.com
+      version: 0.26.1
+    description: Installs and configures HashiCorp Vault as an in-cluster DEV Vault
+    digest: 2c4b840c52483b048ea8c88a01286c75a7c1622850827ebf002250b067c942e4
+    name: canvas-vault
+    type: application
+    urls:
+    - https://github.com/AliSaygin/oda-canvas/releases/download/canvas-vault-0.2.1/canvas-vault-0.2.1.tgz
+    version: 0.2.1
   cert-manager-init:
+  - apiVersion: v2
+    appVersion: v1beta4
+    created: "2024-11-20T13:48:35.138734811Z"
+    dependencies:
+    - condition: cert-manager.enabled
+      name: cert-manager
+      repository: https://charts.jetstack.io
+      version: 1.11.0
+    description: A Helm chart for installing the cert manager
+    digest: 465c12275f48dfb5b62c23b0a1ef7a7f627ec1b6fcfd1772e587c39abc6ee38b
+    name: cert-manager-init
+    type: application
+    urls:
+    - https://github.com/AliSaygin/oda-canvas/releases/download/cert-manager-init-1.0.2/cert-manager-init-1.0.2.tgz
+    version: 1.0.2
   - apiVersion: v2
     appVersion: v1beta3
     created: "2024-02-02T13:27:10.417644407Z"
@@ -185,6 +282,17 @@ entries:
     urls:
     - https://github.com/tmforum-oda/oda-canvas/releases/download/cert-manager-init-0.1.0/cert-manager-init-0.1.0.tgz
     version: 0.1.0
+  component-operator:
+  - apiVersion: v2
+    appVersion: v1beta4
+    created: "2024-11-20T13:48:35.302283796Z"
+    description: A helm chart to deploy the component operator
+    digest: ffc8fd217b42f094b02cd0e5a9bd29998df514f5cb75e08f9e0c5794b2558177
+    name: component-operator
+    type: application
+    urls:
+    - https://github.com/AliSaygin/oda-canvas/releases/download/component-operator-1.2.1/component-operator-1.2.1.tgz
+    version: 1.2.1
   controller:
   - apiVersion: v2
     appVersion: 1.0.0
@@ -218,6 +326,16 @@ entries:
     version: 0.1.0
   dependentapi-simple-operator:
   - apiVersion: v2
+    appVersion: 0.2.3"
+    created: "2024-11-20T13:48:35.418151546Z"
+    description: The DependentAPI Simple Operator
+    digest: 916ede08b8c0f1282fe743fc62eb91a724e36122d773a2c9bedabe5a0699c7a6
+    name: dependentapi-simple-operator
+    type: application
+    urls:
+    - https://github.com/AliSaygin/oda-canvas/releases/download/dependentapi-simple-operator-0.2.4/dependentapi-simple-operator-0.2.4.tgz
+    version: 0.2.4
+  - apiVersion: v2
     appVersion: 0.1.0"
     created: "2024-06-13T19:03:59.871556713Z"
     description: The DependentAPI Simple Operator
@@ -245,6 +363,16 @@ entries:
     - https://github.com/tmforum-oda/oda-canvas/releases/download/kong-gateway-0.1.0/kong-gateway-0.1.0.tgz
     version: 0.1.0
   oda-crds:
+  - apiVersion: v2
+    appVersion: v1beta4
+    created: "2024-11-20T13:48:35.623650679Z"
+    description: A helm chart to deploy the Canvas CRDs
+    digest: 1c64fd37af06edfce2d97838b6e954e9ad038508c60118411a4fc08bf235bf1c
+    name: oda-crds
+    type: application
+    urls:
+    - https://github.com/AliSaygin/oda-canvas/releases/download/oda-crds-1.1.4/oda-crds-1.1.4.tgz
+    version: 1.1.4
   - apiVersion: v2
     appVersion: v1beta3
     created: "2024-03-11T16:31:29.46657909Z"
@@ -276,6 +404,16 @@ entries:
     - https://github.com/tmforum-oda/oda-canvas/releases/download/oda-crds-0.1.0/oda-crds-0.1.0.tgz
     version: 0.1.0
   oda-webhook:
+  - apiVersion: v2
+    appVersion: v1beta4
+    created: "2024-11-20T13:48:35.74930888Z"
+    description: A Helm chart to deploy the webhook following pattern in https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definition-versioning/#webhook-conversion
+    digest: f3c4bfbfc932410553b63128769607de472989a63b144f71b835867bd5469c6e
+    name: oda-webhook
+    type: application
+    urls:
+    - https://github.com/AliSaygin/oda-canvas/releases/download/oda-webhook-1.1.4/oda-webhook-1.1.4.tgz
+    version: 1.1.4
   - apiVersion: v2
     appVersion: v1beta3
     created: "2024-06-13T19:04:00.3997609Z"
@@ -316,4 +454,15 @@ entries:
     urls:
     - https://github.com/tmforum-oda/oda-canvas/releases/download/oda-webhook-0.1.0/oda-webhook-0.1.0.tgz
     version: 0.1.0
-generated: "2024-06-13T19:04:00.399818127Z"
+  secretsmanagement-operator:
+  - apiVersion: v2
+    appVersion: 0.1.2
+    created: "2024-11-20T13:48:35.861752029Z"
+    description: The Secrets Management Operator
+    digest: 39aaeb5dfb44c76b20fad9d27d71bb0db510ccb5e29cd153f31085712d4f14ce
+    name: secretsmanagement-operator
+    type: application
+    urls:
+    - https://github.com/AliSaygin/oda-canvas/releases/download/secretsmanagement-operator-0.1.3/secretsmanagement-operator-0.1.3.tgz
+    version: 0.1.3
+generated: "2024-11-20T13:48:35.861886192Z"
